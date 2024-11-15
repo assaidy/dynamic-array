@@ -46,11 +46,11 @@ int main() {
     printf("len: %ld\n", daInt->len);
     printf("empty: %d\n", DaEmpty(daInt));
 
-    DaAppend(daInt, DaElem(int, 20));
+    DaAppend(daInt, DaElem(int, 20)); // you can use the macro
     DaAppend(daInt, DaElem(int, 30));
-    DaAppend(daInt, DaElem(int, 40));
-    DaAppend(daInt, DaElem(int, 50));
-    DaAppend(daInt, DaElem(int, 60));
+    DaAppend(daInt, &(int){40}); // or just use
+    DaAppend(daInt, &(int){50});
+    DaAppend(daInt, &(int){60});
     if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
