@@ -1,57 +1,117 @@
 #include <stdio.h>
 #include "./da.h"
 
-void printDA(DynamicArray *da) {
-    for (int i = 0; i < da->len; i++) {
-        printf("%d ", da->arr[i]);
+void printIntDA(DynamicArray *da) {
+    for (size_t i = 0; i < da->len; i++) {
+        int item;
+        DaGet(da, i, &item);
+        printf("%d ", item);
+    }
+    printf("\n");
+}
+
+void printFloatDA(DynamicArray *da) {
+    for (size_t i = 0; i < da->len; i++) {
+        float item;
+        DaGet(da, i, &item);
+        printf("%.2f ", item);
     }
     printf("\n");
 }
 
 int main() {
-    DynamicArray *da = NewDynamicArray(0);
+    printf("\n=============================== test with int ===============================\n");
+    DynamicArray *daInt = NewDynamicArray(0, sizeof(int));
     if (DaError != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
 
-    printf("cap: %ld\n", da->cap);
-    printf("len: %ld\n", da->len);
-    printf("empty: %d\n", DaEmpty(da));
+    printf("cap: %ld\n", daInt->cap);
+    printf("len: %ld\n", daInt->len);
+    printf("empty: %d\n", DaEmpty(daInt));
 
-    DaPop(da);
+    int item;
+    DaPop(daInt, &item);
     if (DaError != DaNoError) {
         printf("failed to pop due to: %s\n", DaGetErrMsg());
     }
 
-    DaAppend(da, 10);
+    DaAppend(daInt, elem(int, 10));
     if (DaError != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
 
-    printDA(da);
-    printf("cap: %ld\n", da->cap);
-    printf("len: %ld\n", da->len);
-    printf("empty: %d\n", DaEmpty(da));
+    printIntDA(daInt);
+    printf("cap: %ld\n", daInt->cap);
+    printf("len: %ld\n", daInt->len);
+    printf("empty: %d\n", DaEmpty(daInt));
 
-    DaAppend(da, 20);
-    DaAppend(da, 30);
-    DaAppend(da, 40);
-    DaAppend(da, 50);
-    DaAppend(da, 60);
+    DaAppend(daInt, elem(int, 20));
+    DaAppend(daInt, elem(int, 30));
+    DaAppend(daInt, elem(int, 40));
+    DaAppend(daInt, elem(int, 50));
+    DaAppend(daInt, elem(int, 60));
     if (DaError != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
 
-    printDA(da);
-    printf("cap: %ld\n", da->cap);
-    printf("len: %ld\n", da->len);
-    printf("empty: %d\n", DaEmpty(da));
+    printIntDA(daInt);
+    printf("cap: %ld\n", daInt->cap);
+    printf("len: %ld\n", daInt->len);
+    printf("empty: %d\n", DaEmpty(daInt));
 
-    DaDestroy(&da);
+    DaDestroy(&daInt);
     if (DaError != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
-    printf("%d\n", da == NULL);
+    printf("destroyed: %d\n", daInt == NULL);
+
+    printf("\n=============================== test with float ===============================\n");
+
+    DynamicArray *daFloat = NewDynamicArray(0, sizeof(float));
+    if (DaError != DaNoError) {
+        printf("there is an error: %s\n", DaGetErrMsg());
+    }
+
+    printf("cap: %ld\n", daFloat->cap);
+    printf("len: %ld\n", daFloat->len);
+    printf("empty: %d\n", DaEmpty(daFloat));
+
+    float output;
+    DaPop(daFloat, &output);
+    if (DaError != DaNoError) {
+        printf("failed to pop due to: %s\n", DaGetErrMsg());
+    }
+
+    DaAppend(daFloat, elem(float, 10.5));
+    if (DaError != DaNoError) {
+        printf("there is an error: %s\n", DaGetErrMsg());
+    }
+
+    printFloatDA(daFloat);
+    printf("cap: %ld\n", daFloat->cap);
+    printf("len: %ld\n", daFloat->len);
+    printf("empty: %d\n", DaEmpty(daFloat));
+
+    DaAppend(daFloat, elem(float, 20.5));
+    DaAppend(daFloat, elem(float, 30.5));
+    DaAppend(daFloat, elem(float, 40.5));
+    DaAppend(daFloat, elem(float, 50.5));
+    DaAppend(daFloat, elem(float, 60.5));
+    if (DaError != DaNoError) {
+        printf("there is an error: %s\n", DaGetErrMsg());
+    }
+
+    printFloatDA(daFloat);
+    printf("cap: %ld\n", daFloat->cap);
+    printf("len: %ld\n", daFloat->len);
+    printf("empty: %d\n", DaEmpty(daFloat));
+
+    DaDestroy(&daFloat);
+    if (DaError != DaNoError) {
+        printf("there is an error: %s\n", DaGetErrMsg());
+    }
+    printf("destroyed: %d\n", daFloat == NULL);
 
     return 0;
 }
