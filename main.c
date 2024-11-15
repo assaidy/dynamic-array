@@ -22,7 +22,7 @@ void printFloatDA(DynamicArray *da) {
 int main() {
     printf("\n=============================== test with int ===============================\n");
     DynamicArray *daInt = NewDynamicArray(0, sizeof(int));
-    if (DaError != DaNoError) {
+    if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
 
@@ -32,12 +32,12 @@ int main() {
 
     int item;
     DaPop(daInt, &item);
-    if (DaError != DaNoError) {
+    if (DaGetError() != DaNoError) {
         printf("failed to pop due to: %s\n", DaGetErrMsg());
     }
 
-    DaAppend(daInt, elem(int, 10));
-    if (DaError != DaNoError) {
+    DaAppend(daInt, DaElem(int, 10));
+    if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
 
@@ -46,12 +46,12 @@ int main() {
     printf("len: %ld\n", daInt->len);
     printf("empty: %d\n", DaEmpty(daInt));
 
-    DaAppend(daInt, elem(int, 20));
-    DaAppend(daInt, elem(int, 30));
-    DaAppend(daInt, elem(int, 40));
-    DaAppend(daInt, elem(int, 50));
-    DaAppend(daInt, elem(int, 60));
-    if (DaError != DaNoError) {
+    DaAppend(daInt, DaElem(int, 20));
+    DaAppend(daInt, DaElem(int, 30));
+    DaAppend(daInt, DaElem(int, 40));
+    DaAppend(daInt, DaElem(int, 50));
+    DaAppend(daInt, DaElem(int, 60));
+    if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
 
@@ -61,7 +61,7 @@ int main() {
     printf("empty: %d\n", DaEmpty(daInt));
 
     DaDestroy(&daInt);
-    if (DaError != DaNoError) {
+    if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
     printf("destroyed: %d\n", daInt == NULL);
@@ -69,7 +69,7 @@ int main() {
     printf("\n=============================== test with float ===============================\n");
 
     DynamicArray *daFloat = NewDynamicArray(0, sizeof(float));
-    if (DaError != DaNoError) {
+    if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
 
@@ -79,12 +79,12 @@ int main() {
 
     float output;
     DaPop(daFloat, &output);
-    if (DaError != DaNoError) {
+    if (DaGetError() != DaNoError) {
         printf("failed to pop due to: %s\n", DaGetErrMsg());
     }
 
-    DaAppend(daFloat, elem(float, 10.5));
-    if (DaError != DaNoError) {
+    DaAppend(daFloat, DaElem(float, 10.5));
+    if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
 
@@ -93,12 +93,12 @@ int main() {
     printf("len: %ld\n", daFloat->len);
     printf("empty: %d\n", DaEmpty(daFloat));
 
-    DaAppend(daFloat, elem(float, 20.5));
-    DaAppend(daFloat, elem(float, 30.5));
-    DaAppend(daFloat, elem(float, 40.5));
-    DaAppend(daFloat, elem(float, 50.5));
-    DaAppend(daFloat, elem(float, 60.5));
-    if (DaError != DaNoError) {
+    DaAppend(daFloat, DaElem(float, 20.5));
+    DaAppend(daFloat, DaElem(float, 30.5));
+    DaAppend(daFloat, DaElem(float, 40.5));
+    DaAppend(daFloat, DaElem(float, 50.5));
+    DaAppend(daFloat, DaElem(float, 60.5));
+    if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
 
@@ -108,7 +108,7 @@ int main() {
     printf("empty: %d\n", DaEmpty(daFloat));
 
     DaDestroy(&daFloat);
-    if (DaError != DaNoError) {
+    if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
     printf("destroyed: %d\n", daFloat == NULL);
