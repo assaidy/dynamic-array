@@ -36,7 +36,7 @@ int main() {
         printf("failed to pop due to: %s\n", DaGetErrMsg());
     }
 
-    DaAppend(daInt, DaElem(int, 10));
+    DaAppend(daInt, &(int){10});
     if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
@@ -46,9 +46,9 @@ int main() {
     printf("len: %ld\n", daInt->len);
     printf("empty: %d\n", DaEmpty(daInt));
 
-    DaAppend(daInt, DaElem(int, 20)); // you can use the macro
-    DaAppend(daInt, DaElem(int, 30));
-    DaAppend(daInt, &(int){40}); // or just use
+    DaAppend(daInt, &(int){20});
+    DaAppend(daInt, &(int){30});
+    DaAppend(daInt, &(int){40});
     DaAppend(daInt, &(int){50});
     DaAppend(daInt, &(int){60});
     if (DaGetError() != DaNoError) {
@@ -83,7 +83,7 @@ int main() {
         printf("failed to pop due to: %s\n", DaGetErrMsg());
     }
 
-    DaAppend(daFloat, DaElem(float, 10.5));
+    DaAppend(daFloat, &(float){10.5});
     if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }
@@ -93,11 +93,11 @@ int main() {
     printf("len: %ld\n", daFloat->len);
     printf("empty: %d\n", DaEmpty(daFloat));
 
-    DaAppend(daFloat, DaElem(float, 20.5));
-    DaAppend(daFloat, DaElem(float, 30.5));
-    DaAppend(daFloat, DaElem(float, 40.5));
-    DaAppend(daFloat, DaElem(float, 50.5));
-    DaAppend(daFloat, DaElem(float, 60.5));
+    DaAppend(daFloat, &(float){20.5});
+    DaAppend(daFloat, &(float){30.5});
+    DaAppend(daFloat, &(float){40.5});
+    DaAppend(daFloat, &(float){50.5});
+    DaAppend(daFloat, &(float){60.5});
     if (DaGetError() != DaNoError) {
         printf("there is an error: %s\n", DaGetErrMsg());
     }

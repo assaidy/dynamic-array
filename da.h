@@ -33,8 +33,6 @@ typedef enum {
     DaOutOfRangeError,
 } DaErrorType;
 
-#define DaElem(type, val) &(type){val}
-
 extern DaErrorType DaGetError();
 extern const char *DaGetErrMsg();
 
