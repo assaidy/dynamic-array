@@ -56,6 +56,10 @@ int main() {
     }
 
     printIntDA(daInt);
+
+    DaReverse(daInt);
+
+    printIntDA(daInt);
     printf("cap: %ld\n", daInt->cap);
     printf("len: %ld\n", daInt->len);
     printf("empty: %d\n", DaEmpty(daInt));
@@ -103,6 +107,20 @@ int main() {
     }
 
     printFloatDA(daFloat);
+
+    DaInsertAt(daFloat, 0, &(float){15.0});
+
+    printFloatDA(daFloat);
+
+    DaRemoveAt(daFloat, 1);
+    DaRemoveAt(daFloat, daFloat->len - 1);
+
+    printFloatDA(daFloat);
+    printf("cap: %ld\n", daFloat->cap);
+    printf("len: %ld\n", daFloat->len);
+    printf("empty: %d\n", DaEmpty(daFloat));
+
+    DaClear(&daFloat);
     printf("cap: %ld\n", daFloat->cap);
     printf("len: %ld\n", daFloat->len);
     printf("empty: %d\n", DaEmpty(daFloat));

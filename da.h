@@ -1,5 +1,5 @@
-#ifndef DA_IMPL
-#define DA_IMPL
+#ifndef DA_H_
+#define DA_H_
 
 #include <string.h>
 #include <stdlib.h>
@@ -7,15 +7,11 @@
 #include <stdio.h>
 
 // TODO: other features
-// [ ] DaClear
-// [ ] DaInsertAt
-// [ ] DaRemoveAt
-// [ ] DaReverse
 // [ ] DaFind -> takes a predicate func
 // [ ] DaSort -> takes a comparison func
 // [ ] DaMin -> takes a comparison func
 // [ ] DaMax -> takes a comparison func
-// [ ] DaCopy(DynamicArray *src, DynamicArray *dist) -> deep copy
+// [ ] DaDeepCopy(DynamicArray *src, DynamicArray *dist)
 
 typedef struct {
     size_t cap;
@@ -79,6 +75,28 @@ extern void DaGet(DynamicArray *da, size_t idx, void *outElem);
 // - DaOutOfRangeError
 extern void DaSet(DynamicArray *da, size_t idx, void *val);
 
+// destroys the da and assign it to a new empty one.
+// possible errors: 
+// - DaIsNULLError
+extern void DaClear(DynamicArray **da);
+
+// reverse da content.
+// possible errors: 
+// - DaIsNULLError
+extern void DaReverse(DynamicArray *da);
+
+// insert an element at a specific idx.
+// possible errors: 
+// - DaIsNULLError
+// - DaOutOfRangeError
+extern void DaInsertAt(DynamicArray *da, size_t idx, void *val);
+
+// remove an element at a specific idx.
+// possible errors: 
+// - DaIsNULLError
+// - DaOutOfRangeError
+extern void DaRemoveAt(DynamicArray *da, size_t idx);
+
 // check if da is empty.
 // possible errors: 
 // - DaIsNULLError
@@ -89,4 +107,4 @@ extern bool DaEmpty(DynamicArray *da);
 // - DaIsNULLError
 extern void DaDestroy(DynamicArray **da);
 
-#endif // DA_IMPL
+#endif // DA_H_ 

@@ -1,4 +1,7 @@
 #include "da.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 static DaErrorType DaError = DaNoError;
 
@@ -41,7 +44,7 @@ void *NewDynamicArray(size_t cap, size_t elemSize) {
     return da;
 }
 
-// resize the internal array of da and doubling the capacity.
+// resize the internal array of da and double the capacity.
 // returns -1 if resize failed.
 static int DaResize(DynamicArray *da) {
     if (da->cap == 0) {
@@ -140,6 +143,102 @@ void DaSet(DynamicArray *da, size_t idx, void *val) {
     DaError = DaNoError;
     void *destPtr = (char *)da->arr + (da->elemSize * idx);
     memcpy(destPtr, val, da->elemSize);
+}
+
+void DaClear(DynamicArray **da) {
+    if (*da == NULL) {
+        DaError = DaIsNULLError;
+        return;
+    }
+    DaError = DaNoError;
+    size_t elemSize = (*da)->elemSize;
+    DaDestroy(da);
+    *da = NewDynamicArray(0, elemSize);
+}
+
+static void DaSwap(void *a, void *b, size_t elemSize) {
+    void *tmp = malloc(elemSize);
+    memcpy(tmp, a, elemSize);
+    memcpy(a, b, elemSize);
+    memcpy(b, tmp, elemSize);
+    free(tmp);
+}
+
+void DaReverse(DynamicArray *da) {
+    if (da == NULL) {
+        DaError = DaIsNULLError;
+        return;
+    }
+    if (da->len == 0) {
+        return;
+    }
+    DaError = DaNoError;
+    for (size_t i = 0; i < da->len / 2; i++) {
+        DaSwap(
+            (char *)da->arr + (da->elemSize * i),
+            (char *)da->arr + (da->elemSize * (da->len - i - 1)),
+            da->elemSize
+        );
+    }
+}
+
+static void DaShiftRight(DynamicArray *da, size_t idx) {
+    for (size_t i = da->len; i > idx; i--) {
+        memcpy(
+            (char *)da->arr + (da->elemSize * i),
+            (char *)da->arr + (da->elemSize * (i - 1)),
+            da->elemSize
+        );
+    }
+}
+
+static void DsShiftLeft(DynamicArray *da, size_t idx) {
+    if (idx == 0 && da->len == 1) {
+        return; // just len-- in the caller function is enough
+    }
+    for (size_t i = idx; i < da->len - 1; i++) {
+        memcpy(
+            (char *)da->arr + (da->elemSize * i),
+            (char *)da->arr + (da->elemSize * (i + 1)),
+            da->elemSize
+        );
+    }
+}
+
+void DaInsertAt(DynamicArray *da, size_t idx, void *val) {
+    if (da == NULL) {
+        DaError = DaIsNULLError;
+        return;
+    }
+    if (da->len <= idx) {
+        DaError = DaOutOfRangeError;
+        return;
+    }
+    if (da->len >= da->cap) {
+        if (DaResize(da) == -1) {
+            DaError = DaAllocFailedError;
+            return;
+        }
+    }
+    DaError = DaNoError;
+    DaShiftRight(da, idx);
+    void *ptr = (char *)da->arr + (da->elemSize * idx);
+    memcpy(ptr, val, da->elemSize);
+    da->len++;
+}
+
+void DaRemoveAt(DynamicArray *da, size_t idx) {
+    if (da == NULL) {
+        DaError = DaIsNULLError;
+        return;
+    }
+    if (da->len <= idx) {
+        DaError = DaOutOfRangeError;
+        return;
+    }
+    DaError = DaNoError;
+    DsShiftLeft(da, idx);
+    da->len--;
 }
 
 bool DaEmpty(DynamicArray *da) {
