@@ -1,4 +1,5 @@
 #include <stdio.h>
+#define DA_IMPLEMENTATION
 #include "./da.h"
 
 void printIntDA(DynamicArray *da) {
