@@ -19,6 +19,10 @@ void printFloatDA(DynamicArray *da) {
     printf("\n");
 }
 
+int compareFloat(void *a, void *b) {
+    return *(float *)a - *(float *)b;
+}
+
 int main() {
     printf("\n=============================== test with int ===============================\n");
     DynamicArray *daInt = NewDynamicArray(0, sizeof(int));
@@ -56,6 +60,11 @@ int main() {
     }
 
     printIntDA(daInt);
+
+    size_t idx = DaIndex(daInt, &(int){7});
+    printf("idx of 7.0: %ld\n", idx);
+    idx = DaIndex(daInt, &(int){30});
+    printf("idx of 10.0: %ld\n", idx);
 
     DaReverse(daInt);
 
@@ -109,8 +118,20 @@ int main() {
     printFloatDA(daFloat);
 
     DaInsertAt(daFloat, 0, &(float){15.0});
+    DaInsertAt(daFloat, 2, &(float){1.0});
 
     printFloatDA(daFloat);
+
+    float *min = (float *)DaMin(daFloat, compareFloat);
+    float *max = (float *)DaMax(daFloat, compareFloat);
+
+    printf("min: %f\n", *min);
+    printf("max: %f\n", *max);
+
+    idx = DaIndex(daFloat, &(float){7.0});
+    printf("idx of 7.0: %ld\n", idx);
+    idx = DaIndex(daFloat, &(float){1.0});
+    printf("idx of 1.0: %ld\n", idx);
 
     DaRemoveAt(daFloat, 1);
     DaRemoveAt(daFloat, daFloat->len - 1);

@@ -260,3 +260,106 @@ void DaDestroy(DynamicArray **da) {
     *da = NULL;
     DaError = DaNoError;
 }
+
+void DaDeepCopy(DynamicArray *src, DynamicArray *dest) {
+    if (src == NULL || dest == NULL) {
+        DaError = DaIsNULLError;
+        return;
+    }
+    if (src->arr == NULL) {
+        if (dest->arr != NULL) {
+            free(dest->arr);
+        }
+        dest->arr = NULL;
+    } else {
+        void *newArr = (dest->arr == NULL)
+            ? malloc(src->cap * src->elemSize)
+            : realloc(dest->arr, src->cap * src->elemSize);
+        if (newArr == NULL) {
+            DaError = DaAllocFailedError;
+            return;
+        }
+        dest->arr = newArr;
+        memcpy(dest->arr, src->arr, src->len * src->elemSize);
+    }
+    dest->len = src->len;
+    dest->cap = src->cap;
+    dest->elemSize = src->elemSize;
+    DaError = DaNoError;
+}
+
+void *DaMax(DynamicArray *da, int (*comp)(void *, void *)) {
+    if (da == NULL || da->arr == NULL) {
+        DaError = DaIsNULLError;
+        return NULL;
+    }
+    if (da->len == 0) {
+        DaError = DaIsEmptyError;
+        return NULL;
+    }
+    void *max = da->arr;
+    for (size_t i = 1; i < da->len; i++) {
+        void *cur = (char *)da->arr + (da->elemSize * i);
+        if (comp(cur, max) > 0) {
+            max = cur;
+        } 
+    }
+    return max;
+}
+
+void *DaMin(DynamicArray *da, int (*comp)(void *, void *)) {
+    if (da == NULL || da->arr == NULL) {
+        DaError = DaIsNULLError;
+        return NULL;
+    }
+    if (da->len == 0) {
+        DaError = DaIsEmptyError;
+        return NULL;
+    }
+    void *min = da->arr;
+    for (size_t i = 1; i < da->len; i++) {
+        void *cur = (char *)da->arr + (da->elemSize * i);
+        if (comp(cur, min) < 0) {
+            min = cur;
+        } 
+    }
+    return min;
+}
+
+size_t DaIndex(DynamicArray *da, void *key) {
+    if (da == NULL || da->arr == NULL) {
+        DaError = DaIsNULLError;
+        return -1;
+    }
+    if (da->len == 0) {
+        return -1;
+    }
+    size_t idx = -1;
+    for (int i = 0; i < da->len; i++) {
+        void *cur = (char *)da->arr + (da->elemSize * i);
+        if (memcmp(key, cur, da->elemSize) == 0) {
+            idx = i;
+            break;
+        }
+    }
+    return idx;
+}
+
+size_t DaIndexFunc(DynamicArray *da, bool (*predicate)(void *)) {
+    if (da == NULL || da->arr == NULL) {
+        DaError = DaIsNULLError;
+        return -1;
+    }
+    if (da->len == 0) {
+        return -1;
+    }
+    size_t idx = -1;
+    for (int i = 0; i < da->len; i++) {
+        void *cur = (char *)da->arr + (da->elemSize * i);
+        if (predicate(cur)) {
+            idx = i;
+            break;
+        }
+    }
+    return idx;
+}

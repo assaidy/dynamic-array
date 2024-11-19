@@ -7,11 +7,7 @@
 #include <stdio.h>
 
 // TODO: other features
-// [ ] DaFind -> takes a predicate func
 // [ ] DaSort -> takes a comparison func
-// [ ] DaMin -> takes a comparison func
-// [ ] DaMax -> takes a comparison func
-// [ ] DaDeepCopy(DynamicArray *src, DynamicArray *dist)
 
 typedef struct {
     size_t cap;
@@ -106,5 +102,33 @@ extern bool DaEmpty(DynamicArray *da);
 // possible errors: 
 // - DaIsNULLError
 extern void DaDestroy(DynamicArray **da);
+
+extern void DaDeepCopy(DynamicArray *src, DynamicArray *dest);
+
+// return a pointer to max element. 
+// comp retuns the difference between a, b. if a is the first arg and b is the second, 
+// it should return 0 if a == b, positive if a > b, or negative if a < b.
+// possible errors:
+// - DaIsNULLError
+// - DaIsEmptyError
+extern void *DaMax(DynamicArray *da, int (*comp)(void *, void *));
+
+// return a pointer to min element. 
+// comp retuns the difference between a, b. if a is the first arg and b is the second, 
+// it should return 0 if a == b, positive if a > b, or negative if a < b.
+// possible errors:
+// - DaIsNULLError
+// - DaIsEmptyError
+extern void *DaMin(DynamicArray *da, int (*comp)(void *, void *));
+
+// return index of the first element matches key
+// possible errors:
+// - DaIsNULLError
+extern size_t DaIndex(DynamicArray *da, void *key);
+
+// return index of the first element matches predicate.
+// possible errors:
+// - DaIsNULLError
+extern size_t DaIndexFunc(DynamicArray *da, bool (*predicate)(void *));
 
 #endif // DA_H_ 
