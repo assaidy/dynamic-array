@@ -14,148 +14,132 @@ typedef struct {
 } DynamicArray;
 
 typedef enum {
-    DaNoError,
-    DaInvalidElemSizeError,
-    DaIsEmptyError,
-    DaIsNULLError,
-    DaAllocFailedError,
-    DaOutOfRangeError,
-} DaErrorType;
+    daNoError,              // no error in the last operation
+    daInvalidElemSizeError, // element size should be > 0
+    daIsEmptyError,         // da->arr is empty
+    daIsNULLError,          // da or da->arr is NULL
+    daAllocFailedError,     // failed to alloc/realloc da->arr
+    daOutOfRangeError,      // index out of da->arr's range
+} daErrorType;
 
-DaErrorType DaGetError();
-const char *DaGetErrMsg();
-// create a new dynamic array on the heap.
-// if argument cap is set to 0, the default capcity is elem_size.
+static daErrorType daError = daNoError;
+
+daErrorType daGetError();
+// initialize a dynamic array.
+// if argument cap is set to 0, the default capcity is elemSize.
 // possible errors: 
-// - DaIsNULLError
-// - DaAllocFailedError
-DynamicArray *NewDynamicArray(size_t cap, size_t elemSize);
+// - daIsNULLError
+// - daAllocFailedError
+void daInit(DynamicArray *da, size_t cap, size_t elemSize);
 // append an element at the end of da.
 // possible errors: 
-// - DaIsNULLError
-// - DaAllocFailedError
-void DaAppend(DynamicArray *da, void *val);
-// delete and copy the last element in da to outElem.
+// - daIsNULLError
+// - daAllocFailedError
+void daAppend(DynamicArray *da, void *val);
+// delete and return the last element.
 // possible errors: 
-// - DaIsNULLError
-// - DaIsEmptyError
-void DaPop(DynamicArray *da, void *outElem);
-// copy the first element in da to outElem.
+// - daIsNULLError
+// - daIsEmptyError
+void *daPop(DynamicArray *da);
+// return the first element.
 // possible errors: 
-// - DaIsNULLError
-// - DaIsEmptyError
-void DaFront(DynamicArray *da, void *outElem);
-// copy the last element in da to outElem.
+// - daIsNULLError
+// - daIsEmptyError
+void *daFront(DynamicArray *da);
+// return the last element.
 // possible errors: 
-// - DaIsNULLError
-// - DaIsEmptyError
-void DaBack(DynamicArray *da, void *outElem);
-// get a value in da at idx and copy it to outElem.
+// - daIsNULLError
+// - daIsEmptyError
+void *daBack(DynamicArray *da);
+// return a value in da at idx.
 // possible errors: 
-// - DaIsNULLError
-// - DaOutOfRangeError
-void DaGet(DynamicArray *da, size_t idx, void *outElem);
+// - daIsNULLError
+// - daOutOfRangeError
+void *daGet(DynamicArray *da, size_t idx);
 // set a value with val in da at idx.
 // possible errors: 
-// - DaIsNULLError
-// - DaOutOfRangeError
-void DaSet(DynamicArray *da, size_t idx, void *val);
-// destroys the da and assign it to a new empty one.
+// - daIsNULLError
+// - daOutOfRangeError
+void daSet(DynamicArray *da, size_t idx, void *val);
+// reset the da, and free allocated memory.
 // possible errors: 
-// - DaIsNULLError
-void DaClear(DynamicArray **da);
+// - daIsNULLError
+void daClear(DynamicArray *da);
 // reverse da content.
 // possible errors: 
-// - DaIsNULLError
-void DaReverse(DynamicArray *da);
+// - daIsNULLError
+void daReverse(DynamicArray *da);
 // insert an element at a specific idx.
 // possible errors: 
-// - DaIsNULLError
-// - DaOutOfRangeError
-void DaInsertAt(DynamicArray *da, size_t idx, void *val);
+// - daIsNULLError
+// - daOutOfRangeError
+void daInsertAt(DynamicArray *da, size_t idx, void *val);
 // remove an element at a specific idx.
 // possible errors: 
-// - DaIsNULLError
-// - DaOutOfRangeError
-void DaRemoveAt(DynamicArray *da, size_t idx);
+// - daIsNULLError
+// - daOutOfRangeError
+void daRemoveAt(DynamicArray *da, size_t idx);
 // check if da is empty.
 // possible errors: 
-// - DaIsNULLError
-bool DaEmpty(DynamicArray *da);
-// distorys da, and set its pointer to NULL
+// - daIsNULLError
+bool daEmpty(DynamicArray *da);
+// free allocated memory for da->arr.
 // possible errors: 
-// - DaIsNULLError
-void DaDestroy(DynamicArray **da);
-void DaDeepCopy(DynamicArray *src, DynamicArray *dest);
+// - daIsNULLError
+void daDestroy(DynamicArray *da);
+void daDeepCopy(DynamicArray *src, DynamicArray *dest);
 // return a pointer to max element. 
 // comp retuns the difference between a, b. if a is the first arg and b is the second, 
 // it should return 0 if a == b, positive if a > b, or negative if a < b.
 // possible errors:
-// - DaIsNULLError
-// - DaIsEmptyError
-void *DaMax(DynamicArray *da, int (*comp)(void *, void *));
+// - daIsNULLError
+// - daIsEmptyError
+void *daMax(DynamicArray *da, int (*comp)(void *, void *));
 // return a pointer to min element. 
 // comp retuns the difference between a, b. if a is the first arg and b is the second, 
 // it should return 0 if a == b, positive if a > b, or negative if a < b.
 // possible errors:
-// - DaIsNULLError
-// - DaIsEmptyError
-void *DaMin(DynamicArray *da, int (*comp)(void *, void *));
+// - daIsNULLError
+// - daIsEmptyError
+void *daMin(DynamicArray *da, int (*comp)(void *, void *));
 // return index of the first element matches key
 // possible errors:
-// - DaIsNULLError
-size_t DaIndex(DynamicArray *da, void *key);
+// - daIsNULLError
+size_t daIndex(DynamicArray *da, void *key);
 // return index of the first element matches predicate.
 // possible errors:
-// - DaIsNULLError
-size_t DaIndexFunc(DynamicArray *da, bool (*predicate)(void *));
+// - daIsNULLError
+size_t daIndexFunc(DynamicArray *da, bool (*predicate)(void *));
 
 #ifdef DA_IMPLEMENTATION
 
-static DaErrorType DaError = DaNoError;
-
-DaErrorType DaGetError() {
-    return DaError;
+daErrorType daGetError() {
+    return daError;
 }
 
-const char *DaGetErrMsg() {
-    switch (DaError) {
-        case DaNoError: return "no error"; break;
-        case DaIsEmptyError: return "da is empty"; break;
-        case DaIsNULLError: return "da points to NULL"; break;
-        case DaAllocFailedError: return "heap allocation failed for da"; break;
-        case DaOutOfRangeError: return "index out of range"; break;
-        case DaInvalidElemSizeError: return "invalid element size"; break;
-        default: return "invalid error type"; break;
-    }
-}
-
-DynamicArray *NewDynamicArray(size_t cap, size_t elemSize) {
+void daInit(DynamicArray *da, size_t cap, size_t elemSize) {
     if (elemSize == 0) {
-        DaError = DaInvalidElemSizeError;
-        return NULL;
+        daError = daInvalidElemSizeError;
+        return;
     }
-    DynamicArray *da = (DynamicArray *)malloc(sizeof(DynamicArray));
     if (da == NULL) {
-        DaError = DaAllocFailedError;
-        return NULL;
+        daError = daAllocFailedError;
+        return;
     }
     da->arr = malloc(cap * elemSize);
     if (da->arr == NULL) {
-        DaError = DaAllocFailedError;
-        free(da);
-        return NULL;
+        daError = daAllocFailedError;
+        return;
     }
     da->cap = cap;
     da->len = 0;
     da->elemSize = elemSize;
-    DaError = DaNoError;
-    return da;
+    daError = daNoError;
 }
 
 // resize the internal array of da and double the capacity.
 // returns -1 if resize failed.
-static int DaResize(DynamicArray *da) {
+static int daResize(DynamicArray *da) {
     if (da->cap == 0) {
         da->cap = 1;
     }
@@ -167,105 +151,105 @@ static int DaResize(DynamicArray *da) {
     return 0;
 }
 
-void DaAppend(DynamicArray *da, void *val) {
+void daAppend(DynamicArray *da, void *val) {
     if (da == NULL || val == NULL) {
-        DaError = DaIsNULLError;
+        daError = daIsNULLError;
         return;
     }
     if (da->len >= da->cap) {
-        if (DaResize(da) == -1) {
-            DaError = DaAllocFailedError;
+        if (daResize(da) == -1) {
+            daError = daAllocFailedError;
             return;
         }
     }
     void *destPtr = (char *)da->arr + (da->elemSize * da->len);
     memcpy(destPtr, val, da->elemSize);
     da->len++;
-    DaError = DaNoError;
+    daError = daNoError;
 }
 
-void DaPop(DynamicArray *da, void *outElem) {
+void *daPop(DynamicArray *da) {
     if (da == NULL) {
-        DaError = DaIsNULLError;
-        return;
+        daError = daIsNULLError;
+        return NULL;
     }
     if (da->len == 0) {
-        DaError = DaIsEmptyError;
-        return;
+        daError = daIsEmptyError;
+        return NULL;
     }
-    DaError = DaNoError;
-    void *destPtr = (char *)da->arr + (da->elemSize * (da->len - 1));
-    memcpy(outElem, destPtr, da->elemSize);
+    daError = daNoError;
     da->len--; // TODO: might handle shrink
-}
-
-void DaFront(DynamicArray *da, void *outElem) {
-    if (da == NULL) {
-        DaError = DaIsNULLError;
-        return;
-    }
-    if (da->len == 0) {
-        DaError = DaIsEmptyError;
-        return;
-    }
-    DaError = DaNoError;
-    memcpy(outElem, da->arr, da->elemSize);
-}
-
-void DaBack(DynamicArray *da, void *outElem) {
-    if (da == NULL) {
-        DaError = DaIsNULLError;
-        return;
-    }
-    if (da->len == 0) {
-        DaError = DaIsEmptyError;
-        return;
-    }
-    DaError = DaNoError;
     void *destPtr = (char *)da->arr + (da->elemSize * (da->len - 1));
-    memcpy(outElem, destPtr, da->elemSize);
+    return destPtr;
 }
 
-void DaGet(DynamicArray *da, size_t idx, void *outElem) {
+void *daFront(DynamicArray *da) {
     if (da == NULL) {
-        DaError = DaIsNULLError;
-        return;
+        daError = daIsNULLError;
+        return NULL;
+    }
+    if (da->len == 0) {
+        daError = daIsEmptyError;
+        return NULL;
+    }
+    daError = daNoError;
+    return da->arr;
+}
+
+void *daBack(DynamicArray *da) {
+    if (da == NULL) {
+        daError = daIsNULLError;
+        return NULL;
+    }
+    if (da->len == 0) {
+        daError = daIsEmptyError;
+        return NULL;
+    }
+    daError = daNoError;
+    void *destPtr = (char *)da->arr + (da->elemSize * (da->len - 1));
+    return destPtr;
+}
+
+void *daGet(DynamicArray *da, size_t idx) {
+    if (da == NULL) {
+        daError = daIsNULLError;
+        return NULL;
     }
     if (da->len <= idx) {
-        DaError = DaOutOfRangeError;
-        return;
+        daError = daOutOfRangeError;
+        return NULL;
     }
-    DaError = DaNoError;
+    daError = daNoError;
     void *destPtr = (char *)da->arr + (da->elemSize * idx);
-    memcpy(outElem, destPtr, da->elemSize);
+    return destPtr;
 }
 
-void DaSet(DynamicArray *da, size_t idx, void *val) {
+void daSet(DynamicArray *da, size_t idx, void *val) {
     if (da == NULL) {
-        DaError = DaIsNULLError;
+        daError = daIsNULLError;
         return;
     }
     if (da->len <= idx) {
-        DaError = DaOutOfRangeError;
+        daError = daOutOfRangeError;
         return;
     }
-    DaError = DaNoError;
+    daError = daNoError;
     void *destPtr = (char *)da->arr + (da->elemSize * idx);
     memcpy(destPtr, val, da->elemSize);
 }
 
-void DaClear(DynamicArray **da) {
-    if (*da == NULL) {
-        DaError = DaIsNULLError;
+void daClear(DynamicArray *da) {
+    if (da == NULL) {
+        daError = daIsNULLError;
         return;
     }
-    DaError = DaNoError;
-    size_t elemSize = (*da)->elemSize;
-    DaDestroy(da);
-    *da = NewDynamicArray(0, elemSize);
+    daError = daNoError;
+    size_t elemSize = da->elemSize;
+    daDestroy(da);
+    daInit(da, 0, elemSize);
 }
 
-static void DaSwap(void *a, void *b, size_t elemSize) {
+static void daSwap(void *a, void *b, size_t elemSize) {
     void *tmp = malloc(elemSize);
     memcpy(tmp, a, elemSize);
     memcpy(a, b, elemSize);
@@ -273,17 +257,17 @@ static void DaSwap(void *a, void *b, size_t elemSize) {
     free(tmp);
 }
 
-void DaReverse(DynamicArray *da) {
+void daReverse(DynamicArray *da) {
     if (da == NULL) {
-        DaError = DaIsNULLError;
+        daError = daIsNULLError;
         return;
     }
     if (da->len == 0) {
         return;
     }
-    DaError = DaNoError;
+    daError = daNoError;
     for (size_t i = 0; i < da->len / 2; i++) {
-        DaSwap(
+        daSwap(
             (char *)da->arr + (da->elemSize * i),
             (char *)da->arr + (da->elemSize * (da->len - i - 1)),
             da->elemSize
@@ -291,7 +275,7 @@ void DaReverse(DynamicArray *da) {
     }
 }
 
-static void DaShiftRight(DynamicArray *da, size_t idx) {
+static void daShiftRight(DynamicArray *da, size_t idx) {
     for (size_t i = da->len; i > idx; i--) {
         memcpy(
             (char *)da->arr + (da->elemSize * i),
@@ -314,65 +298,64 @@ static void DsShiftLeft(DynamicArray *da, size_t idx) {
     }
 }
 
-void DaInsertAt(DynamicArray *da, size_t idx, void *val) {
+void daInsertAt(DynamicArray *da, size_t idx, void *val) {
     if (da == NULL) {
-        DaError = DaIsNULLError;
+        daError = daIsNULLError;
         return;
     }
     if (da->len <= idx) {
-        DaError = DaOutOfRangeError;
+        daError = daOutOfRangeError;
         return;
     }
     if (da->len >= da->cap) {
-        if (DaResize(da) == -1) {
-            DaError = DaAllocFailedError;
+        if (daResize(da) == -1) {
+            daError = daAllocFailedError;
             return;
         }
     }
-    DaError = DaNoError;
-    DaShiftRight(da, idx);
+    daError = daNoError;
+    daShiftRight(da, idx);
     void *ptr = (char *)da->arr + (da->elemSize * idx);
     memcpy(ptr, val, da->elemSize);
     da->len++;
 }
 
-void DaRemoveAt(DynamicArray *da, size_t idx) {
+void daRemoveAt(DynamicArray *da, size_t idx) {
     if (da == NULL) {
-        DaError = DaIsNULLError;
+        daError = daIsNULLError;
         return;
     }
     if (da->len <= idx) {
-        DaError = DaOutOfRangeError;
+        daError = daOutOfRangeError;
         return;
     }
-    DaError = DaNoError;
+    daError = daNoError;
     DsShiftLeft(da, idx);
     da->len--;
 }
 
-bool DaEmpty(DynamicArray *da) {
+bool daEmpty(DynamicArray *da) {
     if (da == NULL) {
-        DaError = DaIsNULLError;
+        daError = daIsNULLError;
         return true;
     }
-    DaError = DaNoError;
+    daError = daNoError;
     return da->len == 0;
 }
 
-void DaDestroy(DynamicArray **da) {
-    if (*da == NULL) {
-        DaError = DaIsNULLError;
+void daDestroy(DynamicArray *da) {
+    if (da == NULL) {
+        daError = daIsNULLError;
         return;
     }
-    free((*da)->arr);
-    free(*da);
-    *da = NULL;
-    DaError = DaNoError;
+    daError = daNoError;
+    free(da->arr);
+    da->arr = NULL;
 }
 
-void DaDeepCopy(DynamicArray *src, DynamicArray *dest) {
+void daDeepCopy(DynamicArray *src, DynamicArray *dest) {
     if (src == NULL || dest == NULL) {
-        DaError = DaIsNULLError;
+        daError = daIsNULLError;
         return;
     }
     if (src->arr == NULL) {
@@ -385,7 +368,7 @@ void DaDeepCopy(DynamicArray *src, DynamicArray *dest) {
             ? malloc(src->cap * src->elemSize)
             : realloc(dest->arr, src->cap * src->elemSize);
         if (newArr == NULL) {
-            DaError = DaAllocFailedError;
+            daError = daAllocFailedError;
             return;
         }
         dest->arr = newArr;
@@ -394,16 +377,16 @@ void DaDeepCopy(DynamicArray *src, DynamicArray *dest) {
     dest->len = src->len;
     dest->cap = src->cap;
     dest->elemSize = src->elemSize;
-    DaError = DaNoError;
+    daError = daNoError;
 }
 
-void *DaMax(DynamicArray *da, int (*comp)(void *, void *)) {
+void *daMax(DynamicArray *da, int (*comp)(void *, void *)) {
     if (da == NULL || da->arr == NULL) {
-        DaError = DaIsNULLError;
+        daError = daIsNULLError;
         return NULL;
     }
     if (da->len == 0) {
-        DaError = DaIsEmptyError;
+        daError = daIsEmptyError;
         return NULL;
     }
     void *max = da->arr;
@@ -416,13 +399,13 @@ void *DaMax(DynamicArray *da, int (*comp)(void *, void *)) {
     return max;
 }
 
-void *DaMin(DynamicArray *da, int (*comp)(void *, void *)) {
+void *daMin(DynamicArray *da, int (*comp)(void *, void *)) {
     if (da == NULL || da->arr == NULL) {
-        DaError = DaIsNULLError;
+        daError = daIsNULLError;
         return NULL;
     }
     if (da->len == 0) {
-        DaError = DaIsEmptyError;
+        daError = daIsEmptyError;
         return NULL;
     }
     void *min = da->arr;
@@ -435,9 +418,9 @@ void *DaMin(DynamicArray *da, int (*comp)(void *, void *)) {
     return min;
 }
 
-size_t DaIndex(DynamicArray *da, void *key) {
+size_t daIndex(DynamicArray *da, void *key) {
     if (da == NULL || da->arr == NULL) {
-        DaError = DaIsNULLError;
+        daError = daIsNULLError;
         return -1;
     }
     if (da->len == 0) {
@@ -454,9 +437,9 @@ size_t DaIndex(DynamicArray *da, void *key) {
     return idx;
 }
 
-size_t DaIndexFunc(DynamicArray *da, bool (*predicate)(void *)) {
+size_t daIndexFunc(DynamicArray *da, bool (*predicate)(void *)) {
     if (da == NULL || da->arr == NULL) {
-        DaError = DaIsNULLError;
+        daError = daIsNULLError;
         return -1;
     }
     if (da->len == 0) {

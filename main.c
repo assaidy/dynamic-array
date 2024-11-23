@@ -4,18 +4,14 @@
 
 void printIntDA(DynamicArray *da) {
     for (size_t i = 0; i < da->len; i++) {
-        int item;
-        DaGet(da, i, &item);
-        printf("%d ", item);
+        printf("%d ", *(int *)daGet(da, i));
     }
     printf("\n");
 }
 
 void printFloatDA(DynamicArray *da) {
     for (size_t i = 0; i < da->len; i++) {
-        float item;
-        DaGet(da, i, &item);
-        printf("%.2f ", item);
+        printf("%.2f ", *(float *)daGet(da, i));
     }
     printf("\n");
 }
@@ -26,132 +22,135 @@ int compareFloat(void *a, void *b) {
 
 int main() {
     printf("\n=============================== test with int ===============================\n");
-    DynamicArray *daInt = NewDynamicArray(0, sizeof(int));
-    if (DaGetError() != DaNoError) {
-        printf("there is an error: %s\n", DaGetErrMsg());
+    DynamicArray daInt = {0};
+    daInit(&daInt, 0, sizeof(int));
+    if (daGetError() != daNoError) {
+        printf("line:%d: there is an error with number: %d\n", __LINE__, daGetError());
     }
 
-    printf("cap: %ld\n", daInt->cap);
-    printf("len: %ld\n", daInt->len);
-    printf("empty: %d\n", DaEmpty(daInt));
+    printf("cap: %ld\n", daInt.cap);
+    printf("len: %ld\n", daInt.len);
+    printf("empty: %d\n", daEmpty(&daInt));
 
-    int item;
-    DaPop(daInt, &item);
-    if (DaGetError() != DaNoError) {
-        printf("failed to pop due to: %s\n", DaGetErrMsg());
+    void *_ = daPop(&daInt);
+    if (daGetError() != daNoError) {
+        printf("line:%d: there is an error with number: %d\n", __LINE__, daGetError());
     }
 
-    DaAppend(daInt, &(int){10});
-    if (DaGetError() != DaNoError) {
-        printf("there is an error: %s\n", DaGetErrMsg());
+    daAppend(&daInt, &(int){10});
+    if (daGetError() != daNoError) {
+        printf("line:%d: there is an error with number: %d\n", __LINE__, daGetError());
     }
 
-    printIntDA(daInt);
-    printf("cap: %ld\n", daInt->cap);
-    printf("len: %ld\n", daInt->len);
-    printf("empty: %d\n", DaEmpty(daInt));
+    printf("cap: %ld\n", daInt.cap);
+    printf("len: %ld\n", daInt.len);
+    printf("empty: %d\n", daEmpty(&daInt));
+    printIntDA(&daInt);
 
-    DaAppend(daInt, &(int){20});
-    DaAppend(daInt, &(int){30});
-    DaAppend(daInt, &(int){40});
-    DaAppend(daInt, &(int){50});
-    DaAppend(daInt, &(int){60});
-    if (DaGetError() != DaNoError) {
-        printf("there is an error: %s\n", DaGetErrMsg());
+    daAppend(&daInt, &(int){20});
+    daAppend(&daInt, &(int){30});
+    daAppend(&daInt, &(int){40});
+    daAppend(&daInt, &(int){50});
+    daAppend(&daInt, &(int){60});
+    if (daGetError() != daNoError) {
+        printf("there is an error: %d\n", __LINE__);
+        printf("line:%d: there is an error with number: %d\n", __LINE__, daGetError());
     }
 
-    printIntDA(daInt);
+    printIntDA(&daInt);
 
-    size_t idx = DaIndex(daInt, &(int){7});
-    printf("idx of 7.0: %ld\n", idx);
-    idx = DaIndex(daInt, &(int){30});
-    printf("idx of 10.0: %ld\n", idx);
+    size_t idx = daIndex(&daInt, &(int){7});
+    printf("idx of 7: %ld\n", idx);
+    idx = daIndex(&daInt, &(int){30});
+    printf("idx of 30: %ld\n", idx);
 
-    DaReverse(daInt);
+    daReverse(&daInt);
 
-    printIntDA(daInt);
-    printf("cap: %ld\n", daInt->cap);
-    printf("len: %ld\n", daInt->len);
-    printf("empty: %d\n", DaEmpty(daInt));
+    printIntDA(&daInt);
+    printf("cap: %ld\n", daInt.cap);
+    printf("len: %ld\n", daInt.len);
+    printf("empty: %d\n", daEmpty(&daInt));
 
-    DaDestroy(&daInt);
-    if (DaGetError() != DaNoError) {
-        printf("there is an error: %s\n", DaGetErrMsg());
+    daDestroy(&daInt);
+    if (daGetError() != daNoError) {
+        printf("line:%d: there is an error with number: %d\n", __LINE__, daGetError());
     }
-    printf("destroyed: %d\n", daInt == NULL);
+    printf("destroyed: %d\n", daInt.arr == NULL);
 
     printf("\n=============================== test with float ===============================\n");
 
-    DynamicArray *daFloat = NewDynamicArray(0, sizeof(float));
-    if (DaGetError() != DaNoError) {
-        printf("there is an error: %s\n", DaGetErrMsg());
+    DynamicArray daFloat = {0};
+    daInit(&daFloat, 0, sizeof(float));
+    if (daGetError() != daNoError) {
+        printf("line:%d: there is an error with number: %d\n", __LINE__, daGetError());
     }
 
-    printf("cap: %ld\n", daFloat->cap);
-    printf("len: %ld\n", daFloat->len);
-    printf("empty: %d\n", DaEmpty(daFloat));
+    printf("cap: %ld\n", daFloat.cap);
+    printf("len: %ld\n", daFloat.len);
+    printf("empty: %d\n", daEmpty(&daFloat));
 
-    float output;
-    DaPop(daFloat, &output);
-    if (DaGetError() != DaNoError) {
-        printf("failed to pop due to: %s\n", DaGetErrMsg());
+    _ = daPop(&daFloat);
+    if (daGetError() != daNoError) {
+        printf("line:%d: there is an error with number: %d\n", __LINE__, daGetError());
     }
 
-    DaAppend(daFloat, &(float){10.5});
-    if (DaGetError() != DaNoError) {
-        printf("there is an error: %s\n", DaGetErrMsg());
+    printf("passed\n");
+
+    daAppend(&daFloat, &(float){10.5});
+    if (daGetError() != daNoError) {
+        printf("line:%d: there is an error with number: %d\n", __LINE__, daGetError());
     }
 
-    printFloatDA(daFloat);
-    printf("cap: %ld\n", daFloat->cap);
-    printf("len: %ld\n", daFloat->len);
-    printf("empty: %d\n", DaEmpty(daFloat));
+    printFloatDA(&daFloat);
+    printf("cap: %ld\n", daFloat.cap);
+    printf("len: %ld\n", daFloat.len);
+    printf("empty: %d\n", daEmpty(&daFloat));
 
-    DaAppend(daFloat, &(float){20.5});
-    DaAppend(daFloat, &(float){30.5});
-    DaAppend(daFloat, &(float){40.5});
-    DaAppend(daFloat, &(float){50.5});
-    DaAppend(daFloat, &(float){60.5});
-    if (DaGetError() != DaNoError) {
-        printf("there is an error: %s\n", DaGetErrMsg());
+    daAppend(&daFloat, &(float){20.5});
+    daAppend(&daFloat, &(float){30.5});
+    daAppend(&daFloat, &(float){40.5});
+    daAppend(&daFloat, &(float){50.5});
+    daAppend(&daFloat, &(float){60.5});
+    if (daGetError() != daNoError) {
+        printf("line:%d: there is an error with number: %d\n", __LINE__, daGetError());
     }
 
-    printFloatDA(daFloat);
+    printFloatDA(&daFloat);
 
-    DaInsertAt(daFloat, 0, &(float){15.0});
-    DaInsertAt(daFloat, 2, &(float){1.0});
+    daInsertAt(&daFloat, 0, &(float){15.0});
+    daInsertAt(&daFloat, 2, &(float){1.0});
 
-    printFloatDA(daFloat);
+    printFloatDA(&daFloat);
 
-    float *min = (float *)DaMin(daFloat, compareFloat);
-    float *max = (float *)DaMax(daFloat, compareFloat);
+    float *min = (float *)daMin(&daFloat, compareFloat);
+    float *max = (float *)daMax(&daFloat, compareFloat);
 
     printf("min: %f\n", *min);
     printf("max: %f\n", *max);
 
-    idx = DaIndex(daFloat, &(float){7.0});
+    idx = daIndex(&daFloat, &(float){7.0});
     printf("idx of 7.0: %ld\n", idx);
-    idx = DaIndex(daFloat, &(float){1.0});
+    idx = daIndex(&daFloat, &(float){1.0});
     printf("idx of 1.0: %ld\n", idx);
 
-    DaRemoveAt(daFloat, 1);
-    DaRemoveAt(daFloat, daFloat->len - 1);
+    daRemoveAt(&daFloat, 1);
+    daRemoveAt(&daFloat, daFloat.len - 1);
 
-    printFloatDA(daFloat);
-    printf("cap: %ld\n", daFloat->cap);
-    printf("len: %ld\n", daFloat->len);
-    printf("empty: %d\n", DaEmpty(daFloat));
+    printFloatDA(&daFloat);
+    printf("cap: %ld\n", daFloat.cap);
+    printf("len: %ld\n", daFloat.len);
+    printf("empty: %d\n", daEmpty(&daFloat));
 
-    DaClear(&daFloat);
-    printf("cap: %ld\n", daFloat->cap);
-    printf("len: %ld\n", daFloat->len);
-    printf("empty: %d\n", DaEmpty(daFloat));
+    daClear(&daFloat);
+    printf("cap: %ld\n", daFloat.cap);
+    printf("len: %ld\n", daFloat.len);
+    printf("empty: %d\n", daEmpty(&daFloat));
 
-    DaDestroy(&daFloat);
-    if (DaGetError() != DaNoError) {
-        printf("there is an error: %s\n", DaGetErrMsg());
+    daDestroy(&daFloat);
+    if (daGetError() != daNoError) {
+        printf("line:%d: there is an error with number: %d\n", __LINE__, daGetError());
     }
-    printf("destroyed: %d\n", daFloat == NULL);
+    printf("destroyed: %d\n", daFloat.arr == NULL);
 
     return 0;
 }
